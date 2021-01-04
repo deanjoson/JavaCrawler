@@ -172,6 +172,10 @@ public class FundCrawler {
         return fundTopStockVOS;
     }
 
+    /**
+     * 获取所有基金公司列表
+     * @return
+     */
     @SneakyThrows
     public List<FundCompanyBaseVO> getAllFundCompany() {
         String url = "http://fund.eastmoney.com/js/jjjz_gs.js";
@@ -195,6 +199,12 @@ public class FundCrawler {
         return companyList;
     }
 
+    /**
+     * 获取基金公司详细信息
+     * @param companyCode 基金公司代码
+     * @param companyName 基金公司名称
+     * @return
+     */
     @SneakyThrows
     public FundCompanyVO getFundCompanyInfo(String companyCode, String companyName) {
         try {

@@ -2,7 +2,6 @@ package cn.coolwang.crawler.fund;
 
 import cn.coolwang.crawler.fund.vo.*;
 import cn.coolwang.crawler.util.StringUtils;
-import com.alibaba.fastjson.JSON;
 import lombok.SneakyThrows;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
