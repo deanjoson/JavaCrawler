@@ -1,9 +1,11 @@
 package cn.coolwang.crawler.fund;
 
+import cn.coolwang.crawler.fund.vo.CompanyBaseVO;
 import cn.coolwang.crawler.fund.vo.FundBaseVO;
 import cn.coolwang.crawler.fund.vo.FundRealtimeInfoVO;
 import cn.coolwang.crawler.fund.vo.FundTopStockVO;
 import cn.coolwang.crawler.util.StringUtils;
+import com.alibaba.fastjson.JSON;
 import lombok.SneakyThrows;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -88,6 +90,20 @@ public class FundCrawlerTest {
                 System.out.printf("%20s",stock.getStockValue());
                 System.out.println();
             }
+        }
+    }
+
+    @Test
+    void getAllFundComp() {
+        FundCrawler fundCrawler = new FundCrawler();
+        List<CompanyBaseVO> companyList = fundCrawler.getAllFundCompany();
+        System.out.printf("%8s","基金公司代码");
+        System.out.printf("%18s","基金公司名称");
+        System.out.println();
+        for (CompanyBaseVO companyBaseVO : companyList){
+            System.out.printf("%10s",companyBaseVO.getCompanyCode());
+            System.out.printf("%20s",companyBaseVO.getCompanyName());
+            System.out.println();
         }
     }
 

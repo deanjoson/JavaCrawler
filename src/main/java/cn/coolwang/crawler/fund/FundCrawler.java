@@ -1,5 +1,6 @@
 package cn.coolwang.crawler.fund;
 
+import cn.coolwang.crawler.fund.vo.CompanyBaseVO;
 import cn.coolwang.crawler.fund.vo.FundBaseVO;
 import cn.coolwang.crawler.fund.vo.FundRealtimeInfoVO;
 import cn.coolwang.crawler.fund.vo.FundTopStockVO;
@@ -172,6 +173,29 @@ public class FundCrawler {
             fundTopStockVOS.add(fundTopStockVO);
         }
         return fundTopStockVOS;
+    }
+
+    @SneakyThrows
+    public List<CompanyBaseVO> getAllFundCompany() {
+        String url = "http://fund.eastmoney.com/js/jjjz_gs.js";
+        Connection.Response res = Jsoup.connect(url)
+                .header("Accept", "*/*")
+                .header("Accept-Encoding", "gzip, deflate")
+                .header("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3")
+                .header("Content-Type", "text/*")
+                .userAgent(UserAgentUtils.randomUserAgent())
+                .timeout(10000).ignoreContentType(true).execute();
+        String body = res.body();
+        ScriptObjectMirror gs = (ScriptObjectMirror) JavaScriptUtils.executeForAttribute(body, "gs");
+        ScriptObjectMirror op = (ScriptObjectMirror) gs.get("op");
+        List<CompanyBaseVO> companyList = new ArrayList<>(op.size());
+        for (int i = 0; i < op.size(); i++) {
+            ScriptObjectMirror sub = (ScriptObjectMirror) op.get(String.valueOf(i));
+            //sub 0: 基金公司代码
+            //sub 1: 基金公司名称
+            companyList.add(CompanyBaseVO.builder().companyCode(sub.get("0").toString()).companyName(sub.get("1").toString()).build());
+        }
+        return companyList;
     }
 
 
