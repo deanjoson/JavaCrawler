@@ -1,9 +1,6 @@
 package cn.coolwang.crawler.fund;
 
-import cn.coolwang.crawler.fund.vo.CompanyBaseVO;
-import cn.coolwang.crawler.fund.vo.FundBaseVO;
-import cn.coolwang.crawler.fund.vo.FundRealtimeInfoVO;
-import cn.coolwang.crawler.fund.vo.FundTopStockVO;
+import cn.coolwang.crawler.fund.vo.*;
 import cn.coolwang.crawler.util.JavaScriptUtils;
 import cn.coolwang.crawler.util.StringUtils;
 import cn.coolwang.crawler.util.UserAgentUtils;
@@ -176,7 +173,7 @@ public class FundCrawler {
     }
 
     @SneakyThrows
-    public List<CompanyBaseVO> getAllFundCompany() {
+    public List<FundCompanyBaseVO> getAllFundCompany() {
         String url = "http://fund.eastmoney.com/js/jjjz_gs.js";
         Connection.Response res = Jsoup.connect(url)
                 .header("Accept", "*/*")
@@ -188,14 +185,55 @@ public class FundCrawler {
         String body = res.body();
         ScriptObjectMirror gs = (ScriptObjectMirror) JavaScriptUtils.executeForAttribute(body, "gs");
         ScriptObjectMirror op = (ScriptObjectMirror) gs.get("op");
-        List<CompanyBaseVO> companyList = new ArrayList<>(op.size());
+        List<FundCompanyBaseVO> companyList = new ArrayList<>(op.size());
         for (int i = 0; i < op.size(); i++) {
             ScriptObjectMirror sub = (ScriptObjectMirror) op.get(String.valueOf(i));
             //sub 0: 基金公司代码
             //sub 1: 基金公司名称
-            companyList.add(CompanyBaseVO.builder().companyCode(sub.get("0").toString()).companyName(sub.get("1").toString()).build());
+            companyList.add(FundCompanyBaseVO.builder().companyCode(sub.get("0").toString()).companyName(sub.get("1").toString()).build());
         }
         return companyList;
+    }
+
+    @SneakyThrows
+    public FundCompanyVO getFundCompanyInfo(String companyCode, String companyName) {
+        try {
+            String url = "http://fund.eastmoney.com/Company/" + companyCode + ".html";
+            Document document = Jsoup.connect(url).get();
+            //解析
+            String companyFullName = document.select(".ttjj-panel-main-title").text();
+            Elements contact = document.getElementsByClass("firm-contact clearfix");
+            String position = contact.select("label[class=grey]").get(0).text();
+            String generalManager = contact.select("label[class=grey]").get(1).text();
+            String websiteUrl = contact.select("label[class=grey]").get(2).text();
+            String telephone = contact.select("label[class=grey]").get(3).text();
+            Elements fundInfo = document.select(".fund-info");
+            String manageScale = fundInfo.select("label[class=grey]").get(0).text();
+            String fundCount = fundInfo.select("label[class=grey]").get(1).text();
+            String managerCount = fundInfo.select("label[class=grey]").get(2).text();
+            String publishDate = fundInfo.select("label[class=grey]").get(3).text();
+            String companyProperty = fundInfo.select("label[class=grey]").get(4).text();
+            return FundCompanyVO.builder()
+                    .companyCode(companyCode)
+                    .companyName(companyName)
+                    .companyFullName(companyFullName)
+                    .position(position)
+                    .generalManager(generalManager)
+                    .websiteUrl(websiteUrl)
+                    .telephone(telephone)
+                    .manageScale(Double.parseDouble(manageScale.replace("亿元","").replaceAll("-","0")))
+                    .fundCount(Integer.parseInt(fundCount.replace("只","")))
+                    .managerCount(Integer.parseInt(managerCount.replace("人","")))
+                    .publishDate(publishDate)
+                    .companyProperty(companyProperty)
+                    .build();
+        } catch (Exception e) {
+            System.out.println("获取基金公司信息失败： " + companyCode + "  " + companyName);
+            return FundCompanyVO.builder().companyCode(companyCode)
+                    .companyName(companyName).build();
+        }
+
+
     }
 
 

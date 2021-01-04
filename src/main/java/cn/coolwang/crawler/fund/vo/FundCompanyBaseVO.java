@@ -12,7 +12,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class CompanyBaseVO {
+public class FundCompanyBaseVO {
 
     /**
      * 基金公司代码

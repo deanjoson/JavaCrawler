@@ -1,9 +1,6 @@
 package cn.coolwang.crawler.fund;
 
-import cn.coolwang.crawler.fund.vo.CompanyBaseVO;
-import cn.coolwang.crawler.fund.vo.FundBaseVO;
-import cn.coolwang.crawler.fund.vo.FundRealtimeInfoVO;
-import cn.coolwang.crawler.fund.vo.FundTopStockVO;
+import cn.coolwang.crawler.fund.vo.*;
 import cn.coolwang.crawler.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import lombok.SneakyThrows;
@@ -68,26 +65,26 @@ public class FundCrawlerTest {
     }
 
     @Test
-    public void getFundTopStock(){
+    public void getFundTopStock() {
         FundCrawler fundCrawler = new FundCrawler();
-        List<FundTopStockVO> fundTopStockVOS = fundCrawler.getFundTopStock("161725",2020,10);
-        for (FundTopStockVO fundTopStockVO : fundTopStockVOS){
+        List<FundTopStockVO> fundTopStockVOS = fundCrawler.getFundTopStock("161725", 2020, 10);
+        for (FundTopStockVO fundTopStockVO : fundTopStockVOS) {
             String print = "{0} {1}年{2}持仓股票排名（截止时间：{3}）";
-            System.out.println(StringUtils.placeholder(print,fundTopStockVO.getFundName(),fundTopStockVO.getYear(),fundTopStockVO.getQuarter(),fundTopStockVO.getEndTime()));
-            System.out.printf("%8s","序号");
-            System.out.printf("%10s","股票代码");
-            System.out.printf("%20s","股票名称");
-            System.out.printf("%18s","占净值比例");
-            System.out.printf("%16s","持仓股数，万股");
-            System.out.printf("%16s","持仓市值，万元");
+            System.out.println(StringUtils.placeholder(print, fundTopStockVO.getFundName(), fundTopStockVO.getYear(), fundTopStockVO.getQuarter(), fundTopStockVO.getEndTime()));
+            System.out.printf("%8s", "序号");
+            System.out.printf("%10s", "股票代码");
+            System.out.printf("%20s", "股票名称");
+            System.out.printf("%18s", "占净值比例");
+            System.out.printf("%16s", "持仓股数，万股");
+            System.out.printf("%16s", "持仓市值，万元");
             System.out.println();
-            for (FundTopStockVO.Stock stock: fundTopStockVO.getStocks()){
-                System.out.printf("%8s",stock.getSn());
-                System.out.printf("%13s",stock.getStockCode());
-                System.out.printf("%20s",stock.getStockName());
-                System.out.printf("%20s",stock.getStockProportion());
-                System.out.printf("%20s",stock.getStockAmount());
-                System.out.printf("%20s",stock.getStockValue());
+            for (FundTopStockVO.Stock stock : fundTopStockVO.getStocks()) {
+                System.out.printf("%8s", stock.getSn());
+                System.out.printf("%13s", stock.getStockCode());
+                System.out.printf("%20s", stock.getStockName());
+                System.out.printf("%20s", stock.getStockProportion());
+                System.out.printf("%20s", stock.getStockAmount());
+                System.out.printf("%20s", stock.getStockValue());
                 System.out.println();
             }
         }
@@ -96,15 +93,33 @@ public class FundCrawlerTest {
     @Test
     void getAllFundComp() {
         FundCrawler fundCrawler = new FundCrawler();
-        List<CompanyBaseVO> companyList = fundCrawler.getAllFundCompany();
-        System.out.printf("%8s","基金公司代码");
-        System.out.printf("%18s","基金公司名称");
+        List<FundCompanyBaseVO> companyList = fundCrawler.getAllFundCompany();
+        System.out.printf("%8s", "基金公司代码");
+        System.out.printf("%18s", "基金公司名称");
         System.out.println();
-        for (CompanyBaseVO companyBaseVO : companyList){
-            System.out.printf("%10s",companyBaseVO.getCompanyCode());
-            System.out.printf("%20s",companyBaseVO.getCompanyName());
+        for (FundCompanyBaseVO fundCompanyBaseVO : companyList) {
+            System.out.printf("%10s", fundCompanyBaseVO.getCompanyCode());
+            System.out.printf("%20s", fundCompanyBaseVO.getCompanyName());
             System.out.println();
         }
+    }
+
+    @Test
+    void getFundCompanyInfo() {
+        FundCrawler fundCrawler = new FundCrawler();
+        FundCompanyVO fundCompany = fundCrawler.getFundCompanyInfo("80000248", "广发基金");
+        System.out.println("基金代码    : " + fundCompany.getCompanyCode());
+        System.out.println("基金公司    : " + fundCompany.getCompanyName());
+        System.out.println("基金公司全称 : " + fundCompany.getCompanyFullName());
+        System.out.println("办公地址    : " + fundCompany.getPosition());
+        System.out.println("总经理      : " + fundCompany.getGeneralManager());
+        System.out.println("网站地址    : " + fundCompany.getWebsiteUrl());
+        System.out.println("客服热线    : " + fundCompany.getTelephone());
+        System.out.println("管理规模    : " + fundCompany.getManageScale());
+        System.out.println("基金数量    : " + fundCompany.getFundCount());
+        System.out.println("经理数量    : " + fundCompany.getManagerCount());
+        System.out.println("成立日期    : " + fundCompany.getPublishDate());
+        System.out.println("公司性质    : " + fundCompany.getCompanyProperty());
     }
 
 }
