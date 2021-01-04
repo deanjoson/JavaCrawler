@@ -11,7 +11,9 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 基金爬虫测试
@@ -120,6 +122,45 @@ public class FundCrawlerTest {
         System.out.println("经理数量    : " + fundCompany.getManagerCount());
         System.out.println("成立日期    : " + fundCompany.getPublishDate());
         System.out.println("公司性质    : " + fundCompany.getCompanyProperty());
+    }
+
+    /**
+     * 导出所有公司到CSV （管理规模排序）
+     */
+    @SneakyThrows
+    @Test
+    void exportAllFundCompanyCSV() {
+        FundCrawler fundCrawler = new FundCrawler();
+        //获取所有公司列表
+        List<FundCompanyBaseVO> companyList = fundCrawler.getAllFundCompany();
+        //循环获取公司详细信息（注意：没有使用代理不可使用并发，否则会因反扒机制而失败）
+        List<FundCompanyVO> newCompanyList = companyList.stream()
+                .map(cp -> fundCrawler.getFundCompanyInfo(cp.getCompanyCode(), cp.getCompanyName()))
+                .sorted(Comparator.comparingDouble(FundCompanyVO::getManageScale).reversed())
+                .collect(Collectors.toList());
+        File file = new File("./fundCompany.csv");
+        FileOutputStream fos = new FileOutputStream(file);
+        OutputStreamWriter osw = new OutputStreamWriter(fos, "GBK");
+
+        CSVFormat csvFormat = CSVFormat.DEFAULT.withHeader("公司代码", "公司名称", "公司名称(全称)", "地址", "总经理", "网站地址", "客服热线", "管理规模", "基金数量", "经理数量", "成立日期", "公司性质");
+        CSVPrinter csvPrinter = new CSVPrinter(osw, csvFormat);
+        for (FundCompanyVO fundCompany : newCompanyList) {
+            csvPrinter.printRecord(
+                    fundCompany.getCompanyCode(),
+                    fundCompany.getCompanyName(),
+                    fundCompany.getCompanyFullName(),
+                    fundCompany.getPosition(),
+                    fundCompany.getGeneralManager(),
+                    fundCompany.getWebsiteUrl(),
+                    fundCompany.getTelephone(),
+                    fundCompany.getManageScale(),
+                    fundCompany.getFundCount(),
+                    fundCompany.getManagerCount(),
+                    fundCompany.getPublishDate(),
+                    fundCompany.getCompanyProperty());
+        }
+        csvPrinter.flush();
+        csvPrinter.close();
     }
 
 }
