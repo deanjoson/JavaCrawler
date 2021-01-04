@@ -2,6 +2,8 @@ package cn.coolwang.crawler.fund;
 
 import cn.coolwang.crawler.fund.vo.FundBaseVO;
 import cn.coolwang.crawler.fund.vo.FundRealtimeInfoVO;
+import cn.coolwang.crawler.fund.vo.FundTopStockVO;
+import cn.coolwang.crawler.util.StringUtils;
 import lombok.SneakyThrows;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -61,6 +63,32 @@ public class FundCrawlerTest {
         csvPrinter.flush();
         csvPrinter.close();
         System.out.println("获取全部基金信息完成");
+    }
+
+    @Test
+    public void getFundTopStock(){
+        FundCrawler fundCrawler = new FundCrawler();
+        List<FundTopStockVO> fundTopStockVOS = fundCrawler.getFundTopStock("161725",2020,10);
+        for (FundTopStockVO fundTopStockVO : fundTopStockVOS){
+            String print = "{0} {1}年{2}持仓股票排名（截止时间：{3}）";
+            System.out.println(StringUtils.placeholder(print,fundTopStockVO.getFundName(),fundTopStockVO.getYear(),fundTopStockVO.getQuarter(),fundTopStockVO.getEndTime()));
+            System.out.printf("%8s","序号");
+            System.out.printf("%10s","股票代码");
+            System.out.printf("%20s","股票名称");
+            System.out.printf("%18s","占净值比例");
+            System.out.printf("%16s","持仓股数，万股");
+            System.out.printf("%16s","持仓市值，万元");
+            System.out.println();
+            for (FundTopStockVO.Stock stock: fundTopStockVO.getStocks()){
+                System.out.printf("%8s",stock.getSn());
+                System.out.printf("%13s",stock.getStockCode());
+                System.out.printf("%20s",stock.getStockName());
+                System.out.printf("%20s",stock.getStockProportion());
+                System.out.printf("%20s",stock.getStockAmount());
+                System.out.printf("%20s",stock.getStockValue());
+                System.out.println();
+            }
+        }
     }
 
 }
