@@ -1,5 +1,6 @@
 package cn.coolwang.crawler.fund;
 
+import cn.coolwang.crawler.fund.vo.FundRealtimeInfoVO;
 import org.junit.jupiter.api.Test;
 
 /**

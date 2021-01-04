@@ -1,4 +1,4 @@
-package cn.coolwang.crawler.fund;
+package cn.coolwang.crawler.fund.vo;
 
 import lombok.Builder;
 import lombok.Data;

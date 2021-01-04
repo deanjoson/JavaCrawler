@@ -1,5 +1,7 @@
 package cn.coolwang.crawler.fund;
 
+import cn.coolwang.crawler.fund.vo.FundRealtimeInfoVO;
+import cn.coolwang.crawler.util.StringUtils;
 import cn.coolwang.crawler.util.UserAgentUtils;
 import com.alibaba.fastjson.JSONObject;
 import lombok.SneakyThrows;
@@ -19,13 +21,18 @@ import java.util.regex.Pattern;
 public class FundCrawler {
 
     /**
-     * 实时信息
+     * 天天基金：实时信息
      */
     static String realtime_info_url = "http://fundgz.1234567.com.cn/js/{0}.js";
 
+    /**
+     * 获取基金实时信息
+     * @param fundCode
+     * @return
+     */
     @SneakyThrows
     public FundRealtimeInfoVO getFundRealtimeInfo(String fundCode){
-        Connection.Response res = Jsoup.connect("http://fundgz.1234567.com.cn/js/" + fundCode + ".js")
+        Connection.Response res = Jsoup.connect(StringUtils.placeholder(realtime_info_url,fundCode))
                 .header("Accept", "*/*")
                 .header("Accept-Encoding", "gzip, deflate")
                 .header("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3")
