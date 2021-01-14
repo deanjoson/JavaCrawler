@@ -1,11 +1,15 @@
 package cn.coolwang.crawler.fund;
 
+import cn.coolwang.crawler.fund.service.FundCrawler;
 import cn.coolwang.crawler.fund.vo.*;
 import cn.coolwang.crawler.util.StringUtils;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,11 +25,16 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @date 2021-01-04
  */
+@SpringBootTest
+@Slf4j
 public class FundCrawlerTest {
+
+    @Autowired
+    private FundCrawler fundCrawler;
+
 
     @Test
     public void getFundRealtimeInfo() {
-        FundCrawler fundCrawler = new FundCrawler();
         FundRealtimeInfoVO realtimeInfo = fundCrawler.getFundRealtimeInfo("161725");
         System.out.println("基金代码：" + realtimeInfo.getFundCode());
         System.out.println("基金名称：" + realtimeInfo.getName());
@@ -39,7 +48,6 @@ public class FundCrawlerTest {
     @SneakyThrows
     @Test
     public void getAllFund() {
-        FundCrawler fundCrawler = new FundCrawler();
         List<FundBaseVO> fundBaseVOS = fundCrawler.getAllFund();
         //打印到控制台
 //        System.out.printf("%6s%20s%10s%40s%40s","基金代码","基金名称","基金类型","基金名称拼音简称","基金名称拼音");
@@ -65,9 +73,14 @@ public class FundCrawlerTest {
         System.out.println("获取全部基金信息完成");
     }
 
+    @SneakyThrows
+    @Test
+    public void getFundDetail() {
+        log.info("基金详情： {}", fundCrawler.getFundDetail("161725"));
+    }
+
     @Test
     public void getFundTopStock() {
-        FundCrawler fundCrawler = new FundCrawler();
         List<FundTopStockVO> fundTopStockVOS = fundCrawler.getFundTopStock("161725", 2020, 10);
         for (FundTopStockVO fundTopStockVO : fundTopStockVOS) {
             String print = "{0} {1}年{2}持仓股票排名（截止时间：{3}）";
@@ -93,7 +106,6 @@ public class FundCrawlerTest {
 
     @Test
     void getAllFundComp() {
-        FundCrawler fundCrawler = new FundCrawler();
         List<FundCompanyBaseVO> companyList = fundCrawler.getAllFundCompany();
         System.out.printf("%8s", "基金公司代码");
         System.out.printf("%18s", "基金公司名称");
@@ -107,7 +119,6 @@ public class FundCrawlerTest {
 
     @Test
     void getFundCompanyInfo() {
-        FundCrawler fundCrawler = new FundCrawler();
         FundCompanyVO fundCompany = fundCrawler.getFundCompanyInfo("80000248", "广发基金");
         System.out.println("基金代码    : " + fundCompany.getCompanyCode());
         System.out.println("基金公司    : " + fundCompany.getCompanyName());
@@ -129,7 +140,6 @@ public class FundCrawlerTest {
     @SneakyThrows
     @Test
     void exportAllFundCompanyCSV() {
-        FundCrawler fundCrawler = new FundCrawler();
         //获取所有公司列表
         List<FundCompanyBaseVO> companyList = fundCrawler.getAllFundCompany();
         //循环获取公司详细信息（注意：没有使用代理不可使用并发，否则会因反扒机制而失败）

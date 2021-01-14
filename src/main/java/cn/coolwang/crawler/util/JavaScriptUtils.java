@@ -8,12 +8,14 @@ import java.util.Set;
  * JavaScript解析引擎
  *
  * @author 邓军
- * @date
  * @version 1.0
+ * @date
  */
 public class JavaScriptUtils {
 
-    /** 单例的JavaScript解析引擎 */
+    /**
+     * 单例的JavaScript解析引擎
+     */
     private static ScriptEngine javaScriptEngine;
 
     static {
@@ -50,6 +52,53 @@ public class JavaScriptUtils {
         javaScriptEngine.eval(script);
         return javaScriptEngine.getContext().getAttribute(attributeName);
     }
+
+    /**
+     * 运行一个JavaScript代码段,并获取指定变量名的值
+     *
+     * @param script        代码段
+     * @param attributeName 已知的变量名
+     * @return 指定变量名对应的值
+     * @throws ScriptException JavaScript代码运行异常
+     */
+    public static String executeForAttributeString(String script, String attributeName) throws ScriptException {
+        return executeForAttribute(script, attributeName).toString();
+    }
+
+    /**
+     * 运行一个JavaScript代码段,并获取指定变量名的值
+     *
+     * @param script        代码段
+     * @param attributeName 已知的变量名
+     * @return 指定变量名对应的值
+     * @throws ScriptException JavaScript代码运行异常
+     */
+    public static Double executeForAttributeDouble(String script, String attributeName) throws ScriptException {
+        String val = executeForAttributeString(script, attributeName);
+        try {
+            return StringUtils.isEmpty(val) ? 0d : Double.parseDouble(val);
+        } catch (Exception e) {
+            return 0d;
+        }
+    }
+
+    /**
+     * 运行一个JavaScript代码段,并获取指定变量名的值
+     *
+     * @param script        代码段
+     * @param attributeName 已知的变量名
+     * @return 指定变量名对应的值
+     * @throws ScriptException JavaScript代码运行异常
+     */
+    public static Integer executeForAttributeInt(String script, String attributeName) throws ScriptException {
+        String val = executeForAttributeString(script, attributeName);
+        try {
+            return StringUtils.isEmpty(val) ? 0 : Integer.parseInt(val);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
 
     /**
      * 获取当前语句运行后第一个有值变量的值

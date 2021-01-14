@@ -1,6 +1,11 @@
-package cn.coolwang.crawler.fund;
+package cn.coolwang.crawler.fund.service;
 
-import cn.coolwang.crawler.fund.vo.*;
+import cn.coolwang.crawler.fund.vo.FundBaseVO;
+import cn.coolwang.crawler.fund.vo.FundCompanyBaseVO;
+import cn.coolwang.crawler.fund.vo.FundCompanyVO;
+import cn.coolwang.crawler.fund.vo.FundDetailVO;
+import cn.coolwang.crawler.fund.vo.FundRealtimeInfoVO;
+import cn.coolwang.crawler.fund.vo.FundTopStockVO;
 import cn.coolwang.crawler.util.JavaScriptUtils;
 import cn.coolwang.crawler.util.StringUtils;
 import cn.coolwang.crawler.util.UserAgentUtils;
@@ -12,6 +17,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +31,7 @@ import java.util.regex.Pattern;
  * @version 1.0
  * @date 2021-01-04
  */
+@Component
 public class FundCrawler {
 
 
@@ -101,6 +108,35 @@ public class FundCrawler {
             fundBaseVOS.add(fundBaseVO);
         }
         return fundBaseVOS;
+    }
+
+    @SneakyThrows
+    public FundDetailVO getFundDetail(String fundCode) {
+        Connection.Response res = Jsoup.connect("http://fund.eastmoney.com/pingzhongdata/" + fundCode + ".js")
+                .header("Accept", "*/*")
+                .header("Accept-Encoding", "gzip, deflate")
+                .header("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3")
+                .header("Content-Type", "text/*")
+                .userAgent(UserAgentUtils.randomUserAgent())
+                .timeout(10000).ignoreContentType(true).execute();
+        String body = res.body();
+        //获取基金经理
+        ScriptObjectMirror fundManagers = (ScriptObjectMirror)JavaScriptUtils.executeForAttribute(body,"Data_currentFundManager");
+        ScriptObjectMirror fundManager = (ScriptObjectMirror) fundManagers.get(String.valueOf(0));
+
+        return FundDetailVO.builder()
+                .fundName(JavaScriptUtils.executeForAttributeString(body, "fS_name"))
+                .fundCode(fundCode)
+                .originalRate(JavaScriptUtils.executeForAttributeDouble(body,"fund_sourceRate"))
+                .purchaseRate(JavaScriptUtils.executeForAttributeDouble(body,"fund_Rate"))
+                .minSubAmount(JavaScriptUtils.executeForAttributeInt(body,"fund_minsg"))
+                .syl1y(JavaScriptUtils.executeForAttributeDouble(body,"syl_1y"))
+                .syl3y(JavaScriptUtils.executeForAttributeDouble(body,"syl_3y"))
+                .syl6y(JavaScriptUtils.executeForAttributeDouble(body,"syl_6y"))
+                .syl1n(JavaScriptUtils.executeForAttributeDouble(body,"syl_1n"))
+                .managerCode(fundManager.get("id").toString())
+                .managerName(fundManager.get("name").toString())
+                .build();
     }
 
     /**
@@ -242,9 +278,6 @@ public class FundCrawler {
             return FundCompanyVO.builder().companyCode(companyCode)
                     .companyName(companyName).build();
         }
-
-
     }
-
 
 }
