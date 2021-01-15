@@ -1,5 +1,6 @@
 package cn.coolwang.crawler.fund.mapper;
 
+import cn.coolwang.crawler.extend.mybatis.CommonMapper;
 import cn.coolwang.crawler.fund.entity.FundEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -9,6 +10,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author 邓军
  * @since 2021-01-14 16:15:37
  */
-public interface FundMapper extends BaseMapper<FundEntity> {
+public interface FundMapper extends CommonMapper<FundEntity> {
 
 }

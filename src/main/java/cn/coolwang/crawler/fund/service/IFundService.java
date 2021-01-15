@@ -12,6 +12,17 @@ import cn.coolwang.crawler.fund.entity.FundEntity;
 public interface IFundService {
 
     /**
+     * 保存所有基金基础信息
+     */
+    void saveAllFundBase();
+    /**
+     * 更新基金详细信息
+     *
+     * @param fundCode
+     */
+    void updateFundDetail(String fundCode);
+
+    /**
      * 查询基金详细信息
      *
      * @param fundCode 基金代码

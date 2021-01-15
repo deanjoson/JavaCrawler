@@ -17,7 +17,7 @@ import java.util.Date;
  * 基金信息(Fund)表实体类
  *
  * @author 邓军
- * @since 2021-01-14 16:15:35
+ * @since 2021-01-15 09:59:50
  */
 @Setter
 @Getter
@@ -28,7 +28,7 @@ public class FundEntity extends BaseModel {
     /**
      * 基金代码
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.INPUT)
     private String fundCode;
 
     /**
@@ -38,13 +38,19 @@ public class FundEntity extends BaseModel {
     private String fundName;
 
     /**
-     * 原始费率
+     * 基金类型
+     */
+    @TableField("fund_type")
+    private String fundType;
+
+    /**
+     * 天天基金-原始费率
      */
     @TableField("original_rate")
     private Double originalRate;
 
     /**
-     * 购买费率
+     * 天天基金-购买费率
      */
     @TableField("purchase_rate")
     private Double purchaseRate;
@@ -54,30 +60,6 @@ public class FundEntity extends BaseModel {
      */
     @TableField("min_sub_amount")
     private Integer minSubAmount;
-
-    /**
-     * 近一月收益率
-     */
-    @TableField("syl_1y")
-    private Double syl1y;
-
-    /**
-     * 近三月收益率
-     */
-    @TableField("syl_3y")
-    private Double syl3y;
-
-    /**
-     * 近6月收益率
-     */
-    @TableField("syl_6y")
-    private Double syl6y;
-
-    /**
-     * 近一年收益率
-     */
-    @TableField("syl_1n")
-    private Double syl1n;
 
     /**
      * 现任基金经理代码
@@ -90,6 +72,66 @@ public class FundEntity extends BaseModel {
      */
     @TableField("manager_name")
     private String managerName;
+
+    /**
+     * 今年以来
+     */
+    @TableField("syl_this_year")
+    private Double sylThisYear;
+
+    /**
+     * 近一周
+     */
+    @TableField("syl_1z")
+    private Double syl1z;
+
+    /**
+     * 近一月
+     */
+    @TableField("syl_1y")
+    private Double syl1y;
+
+    /**
+     * 近三月
+     */
+    @TableField("syl_3y")
+    private Double syl3y;
+
+    /**
+     * 近六月
+     */
+    @TableField("syl_6y")
+    private Double syl6y;
+
+    /**
+     * 近一年
+     */
+    @TableField("syl_1n")
+    private Double syl1n;
+
+    /**
+     * 近2年
+     */
+    @TableField("syl_2n")
+    private Double syl2n;
+
+    /**
+     * 近3年
+     */
+    @TableField("syl_3n")
+    private Double syl3n;
+
+    /**
+     * 近5年
+     */
+    @TableField("syl_5n")
+    private Double syl5n;
+
+    /**
+     * 成立以来
+     */
+    @TableField("syl_build")
+    private Double sylBuild;
 
     /**
      * 创建时间
