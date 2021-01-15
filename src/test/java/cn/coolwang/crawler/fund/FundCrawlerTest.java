@@ -79,6 +79,12 @@ public class FundCrawlerTest {
         log.info("基金详情： {}", fundCrawler.getFundDetail("161725"));
     }
 
+    @SneakyThrows
+    @Test
+    public void getFundJdSyl() {
+       fundCrawler.getFundJdSyl("161725");
+    }
+
     @Test
     public void getFundTopStock() {
         List<FundTopStockVO> fundTopStockVOS = fundCrawler.getFundTopStock("161725", 2020, 10);
