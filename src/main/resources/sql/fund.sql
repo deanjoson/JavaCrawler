@@ -22,3 +22,27 @@ CREATE TABLE IF NOT EXISTS db_java_crawler.t_fund
     ) ENGINE = InnoDB
     CHARACTER SET = utf8mb4
     COLLATE = utf8mb4_general_ci COMMENT = '基金信息';
+
+DROP TABLE IF EXISTS db_java_crawler.t_fund_jdzf;
+create table if not exists db_java_crawler.t_fund_jdzf
+(
+    fund_code     varchar(10) NOT NULL COMMENT '基金代码',
+    fund_name     varchar(64) not null comment '基金名称',
+    type          tinyint     not null comment '涨幅类型',
+    type_desc     varchar(16) not null comment '涨幅类型描述',
+    syl_this_year varchar(16) not null comment '今年以来',
+    syl_1z        varchar(16) not null comment '近一周',
+    syl_1y        varchar(16) not null comment '近一月',
+    syl_3y        varchar(16) not null comment '近三月',
+    syl_6y        varchar(16) not null comment '近六月',
+    syl_1n        varchar(16) not null comment '近一年',
+    syl_2n        varchar(16) not null comment '近2年',
+    syl_3n        varchar(16) not null comment '近3年',
+    syl_5n        varchar(16) not null comment '近5年',
+    syl_build     varchar(16) not null comment '成立以来',
+    create_time   timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time   timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (fund_code,type)
+    ) ENGINE = InnoDB
+    CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_general_ci COMMENT = '基金阶段涨幅信息';
