@@ -94,6 +94,7 @@ public class FundServiceIml implements IFundService {
         fundEntity.setSyl3n(NumberUtils.parseDouble(jdzfVO.getSyl3n(), "%"));
         fundEntity.setSyl5n(NumberUtils.parseDouble(jdzfVO.getSyl5n(), "%"));
         fundEntity.setSylBuild(NumberUtils.parseDouble(jdzfVO.getSylBuild(), "%"));
+        fundEntity.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
         if (exists) {
             fundMapper.updateById(fundEntity);
         } else {

@@ -144,13 +144,14 @@ public class FundCrawler {
                 .build();
     }
 
-    // @SneakyThrows
-    // public void getFundDetail2(String fundCode){
-    //     // String url = "http://fund.eastmoney.com/" + fundCode + ".html";
-    //     String url = "http://fundf10.eastmoney.com/jdzf_" + fundCode + ".html";
-    //     Document document = Jsoup.connect(url).get();
-    //     System.out.println(document);
-    // }
+    @SneakyThrows
+    public void getFundDetail2(String fundCode){
+        // String url = "http://fund.eastmoney.com/" + fundCode + ".html";
+        String url = "http://fundf10.eastmoney.com/jdzf_" + fundCode + ".html";
+        System.out.println(url);
+        Document document = Jsoup.connect(url).get();
+        System.out.println(document);
+    }
 
     @SneakyThrows
     public List<FundJdzfVO> getFundJdSyl(String fundCode) {

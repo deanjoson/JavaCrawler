@@ -76,7 +76,13 @@ public class FundCrawlerTest {
     @SneakyThrows
     @Test
     public void getFundDetail() {
-        log.info("基金详情： {}", fundCrawler.getFundDetail("161725"));
+        log.info("基金详情： {}", fundCrawler.getFundDetail("005827"));
+    }
+
+    @SneakyThrows
+    @Test
+    public void getFundDetail2() {
+        fundCrawler.getFundDetail2("005827");
     }
 
     @SneakyThrows

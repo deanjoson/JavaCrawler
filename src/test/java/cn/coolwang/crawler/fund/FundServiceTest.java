@@ -37,11 +37,11 @@ public class FundServiceTest {
     @Test
     public void updateAllFundDetail() {
         LambdaQueryWrapper<FundEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.isNull(FundEntity::getOriginalRate);
+        // wrapper.isNull(FundEntity::getOriginalRate);
+        // wrapper.eq(FundEntity::getFundCode,"005827");
         List<FundEntity> fundEntities = fundMapper.selectList(wrapper);
         log.info("待更新基金数量：{}",fundEntities.size());
         List<FundEntity> fail = new ArrayList<>();
-        List<FundEntity> secondFail = new ArrayList<>();
         fundEntities.parallelStream().forEach(fund -> {
             try {
                 fundService.updateFundDetail(fund.getFundCode());
@@ -56,8 +56,8 @@ public class FundServiceTest {
             try {
                 fundService.updateFundDetail(fund.getFundCode());
             } catch (Exception e) {
-                log.warn("基金二次更新失败：{} {} {}", fund.getFundCode(), fund.getFundName(), fund.getFundType());
-                secondFail.add(fund);
+                log.warn("基金二次更新失败：{} {} {},移除该基金", fund.getFundCode(), fund.getFundName(), fund.getFundType());
+               fundMapper.deleteById(fund.getFundCode());
             }
         });
         log.error("二次失败基金数量：{}", fail.size());
@@ -70,3 +70,5 @@ public class FundServiceTest {
         log.info("保存完成");
     }
 }
+
+
