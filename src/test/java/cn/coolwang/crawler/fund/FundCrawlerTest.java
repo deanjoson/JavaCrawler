@@ -184,4 +184,9 @@ public class FundCrawlerTest {
         csvPrinter.close();
     }
 
+    @Test
+    public void getCharacteristicData(){
+        System.out.println(fundCrawler.getCharacteristicData("161720"));;
+    }
+
 }

@@ -47,4 +47,42 @@ public class NumberUtils {
             return defaultVal;
         }
     }
+
+    //
+    public static Integer parseInt(String val) {
+        if (StringUtils.isEmpty(val)) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(val);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static Integer parseInt(String val, Integer defaultVal) {
+        if (StringUtils.isEmpty(val)) {
+            return defaultVal;
+        }
+        try {
+            return Integer.parseInt(val);
+        } catch (Exception e) {
+            return defaultVal;
+        }
+    }
+
+    public static Integer parseInt(String val, String replaceNull) {
+        return parseInt(val,replaceNull,null);
+    }
+
+    public static Integer parseInt(String val, String replaceNull,Integer defaultVal) {
+        if (StringUtils.isEmpty(val)) {
+            return defaultVal;
+        }
+        try {
+            return Integer.parseInt(val.replaceAll(replaceNull,""));
+        } catch (Exception e) {
+            return defaultVal;
+        }
+    }
 }

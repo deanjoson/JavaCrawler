@@ -2,6 +2,7 @@ package cn.coolwang.crawler.fund.service;
 
 import cn.coolwang.crawler.fund.enums.JdsyType;
 import cn.coolwang.crawler.fund.vo.FundBaseVO;
+import cn.coolwang.crawler.fund.vo.FundCharacteristicDataVO;
 import cn.coolwang.crawler.fund.vo.FundCompanyBaseVO;
 import cn.coolwang.crawler.fund.vo.FundCompanyVO;
 import cn.coolwang.crawler.fund.vo.FundDetailVO;
@@ -9,6 +10,7 @@ import cn.coolwang.crawler.fund.vo.FundJdzfVO;
 import cn.coolwang.crawler.fund.vo.FundRealtimeInfoVO;
 import cn.coolwang.crawler.fund.vo.FundTopStockVO;
 import cn.coolwang.crawler.util.JavaScriptUtils;
+import cn.coolwang.crawler.util.NumberUtils;
 import cn.coolwang.crawler.util.StringUtils;
 import cn.coolwang.crawler.util.UserAgentUtils;
 import com.alibaba.fastjson.JSONObject;
@@ -377,6 +379,38 @@ public class FundCrawler {
      */
     public void getManagerDetail(String managerCode) {
         String managerDetailUrl = "http://fund.eastmoney.com/manager/30379533.html";
+    }
+
+    /**
+     * 获取基金特色数据
+     */
+    @SneakyThrows
+    public FundCharacteristicDataVO getCharacteristicData(String fundCode){
+        // String url = "https://fundmobapi.eastmoney.com/FundMNewApi/FundMNUniqueInfo?product=EFund&appVersion=6.3.7&serverVersion=6.3.7&FCODE=110011&deviceid=284b3ac3927989fc0ceb7a1c9774ebd4%7C%7Ciemi_tluafed_me&version=6.3.7&userId=1955d5db91e74b3f82f961b7138ad1d2&cToken=jqak6jnnfk1k6a-qek-endfjnd8kh8dc.8&MobileKey=284b3ac3927989fc0ceb7a1c9774ebd4%7C%7Ciemi_tluafed_me&OSVersion=10&plat=Android&uToken=ad-a-e68eqeadnu6qeh1hcaqq6-uenhexf9eke59.8&passportid=5427625209918448";
+        String url = "http://fundmobapi.eastmoney.com/FundMNewApi/FundMNUniqueInfo?product=EFund&appVersion=6.3.7&serverVersion=6.3.7&FCODE=" + fundCode +"&deviceid=284b3ac3927989fc0ceb7a1c9774ebd4%7C%7Ciemi_tluafed_me&version=6.3.7&OSVersion=10&plat=Android";
+        Connection.Response res = Jsoup.connect(url)
+                .header("Accept", "*/*")
+                .header("Accept-Encoding", "gzip, deflate")
+                .header("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3")
+                .header("Content-Type", "text/*")
+                .userAgent(UserAgentUtils.randomUserAgent())
+                .timeout(10000).ignoreContentType(true).execute();
+        String body = res.body();
+        //body
+        //{"Datas":{"SHARP1":"2.9998","SHARP_1NRANK":"267","SHARP_1NFSC":"3334","SYL_1N":"94.36","MAXRETRA1":"15.74","MAXRETRA_1NRANK":"2137","MAXRETRA_1NFSC":"3337","STDDEV1":"22.3018","STDDEV_1NRANK":"--","STDDEV_1NFSC":"--","PROFIT_Z":"60.64","PROFIT_Y":"64.39","PROFIT_3Y":"74.27","PROFIT_6Y":"80.95","PROFIT_1N":"88.32","PV_Y":"9750268","DTCOUNT_Y":"494774","FFAVORCOUNT":"1114108","EARN_1N":"1986292565.07","AVGHOLD":"127.66","BROKENTIMES":"--","ISEXCHG":"0"},"ErrCode":0,"Success":true,"ErrMsg":null,"Message":null,"ErrorCode":"0","ErrorMessage":null,"ErrorMsgLst":null,"TotalCount":1,"Expansion":null}
+        JSONObject jsonObject = JSONObject.parseObject(body);
+        if (jsonObject.getIntValue("ErrCode") == 0){
+            JSONObject data = jsonObject.getJSONObject("Datas");
+            return FundCharacteristicDataVO.builder()
+                    .sharp1n(NumberUtils.parseDouble(data.getString("SHARP1")))
+                    .stddev1n(NumberUtils.parseDouble(data.getString("STDDEV1")))
+                    .maxretra1n(NumberUtils.parseDouble(data.getString("MAXRETRA1")))
+                    .dtcount1y(NumberUtils.parseInt(data.getString("DTCOUNT_Y")))
+                    .pv1y(NumberUtils.parseInt(data.getString("PV_Y")))
+                    .avghold(NumberUtils.parseDouble(data.getString("AVGHOLD")))
+                    .build();
+        }
+        return null;
     }
 
 
