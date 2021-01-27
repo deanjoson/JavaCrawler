@@ -1,7 +1,6 @@
 package cn.coolwang.crawler.fund.entity;
 
 import cn.coolwang.crawler.pojo.BaseModel;
-import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -10,14 +9,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * 基金信息(Fund)表实体类
  *
  * @author 邓军
- * @since 2021-01-15 09:59:50
+ * @since 2021-01-25 11:49:35
  */
 @Setter
 @Getter
@@ -28,7 +25,7 @@ public class FundEntity extends BaseModel {
     /**
      * 基金代码
      */
-    @TableId(type = IdType.INPUT)
+    @TableId(type = IdType.ASSIGN_ID)
     private String fundCode;
 
     /**
@@ -74,64 +71,100 @@ public class FundEntity extends BaseModel {
     private String managerName;
 
     /**
-     * 今年以来
+     * 阶段收益：今年以来
      */
     @TableField("syl_this_year")
     private Double sylThisYear;
 
     /**
-     * 近一周
+     * 阶段收益：近一周
      */
     @TableField("syl_1z")
     private Double syl1z;
 
     /**
-     * 近一月
+     * 阶段收益：近一月
      */
     @TableField("syl_1y")
     private Double syl1y;
 
     /**
-     * 近三月
+     * 阶段收益：近三月
      */
     @TableField("syl_3y")
     private Double syl3y;
 
     /**
-     * 近六月
+     * 阶段收益：近六月
      */
     @TableField("syl_6y")
     private Double syl6y;
 
     /**
-     * 近一年
+     * 阶段收益：近一年
      */
     @TableField("syl_1n")
     private Double syl1n;
 
     /**
-     * 近2年
+     * 阶段收益：近2年
      */
     @TableField("syl_2n")
     private Double syl2n;
 
     /**
-     * 近3年
+     * 阶段收益：近3年
      */
     @TableField("syl_3n")
     private Double syl3n;
 
     /**
-     * 近5年
+     * 阶段收益：近5年
      */
     @TableField("syl_5n")
     private Double syl5n;
 
     /**
-     * 成立以来
+     * 阶段收益：成立以来
      */
     @TableField("syl_build")
     private Double sylBuild;
+
+    /**
+     * 特色数据：近一年夏普比率
+     */
+    @TableField("sharp_1n")
+    private Double sharp1n;
+
+    /**
+     * 特色数据：近一年波动率
+     */
+    @TableField("stddev_1n")
+    private Double stddev1n;
+
+    /**
+     * 特色数据：近一年最大回撤
+     */
+    @TableField("maxretra_1n")
+    private Double maxretra1n;
+
+    /**
+     * 特色数据：近一月定投人数
+     */
+    @TableField("dtcount_1y")
+    private Integer dtcount1y;
+
+    /**
+     * 特色数据：近一月访问量
+     */
+    @TableField("pv_1y")
+    private Integer pv1y;
+
+    /**
+     * 特色数据：用户平均持有天数
+     */
+    @TableField("avghold")
+    private Double avghold;
 
     /**
      * 创建时间
