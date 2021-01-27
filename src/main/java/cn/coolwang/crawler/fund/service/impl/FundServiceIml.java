@@ -7,12 +7,14 @@ import cn.coolwang.crawler.fund.mapper.FundMapper;
 import cn.coolwang.crawler.fund.service.FundCrawler;
 import cn.coolwang.crawler.fund.service.IFundService;
 import cn.coolwang.crawler.fund.vo.FundBaseVO;
+import cn.coolwang.crawler.fund.vo.FundCharacteristicDataVO;
 import cn.coolwang.crawler.fund.vo.FundDetailVO;
 import cn.coolwang.crawler.fund.vo.FundJdzfVO;
 import cn.coolwang.crawler.util.CollectionUtils;
 import cn.coolwang.crawler.util.NumberUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -73,33 +75,43 @@ public class FundServiceIml implements IFundService {
         if (Objects.isNull(detailVO)) {
             throw new RuntimeException("获取基金详细信息失败");
         }
-        fundEntity.setFundCode(detailVO.getFundCode());
-        fundEntity.setFundName(detailVO.getFundName());
-        fundEntity.setManagerCode(detailVO.getManagerCode());
-        fundEntity.setManagerName(detailVO.getManagerName());
-        fundEntity.setMinSubAmount(detailVO.getMinSubAmount());
-        fundEntity.setOriginalRate(detailVO.getOriginalRate());
-        fundEntity.setPurchaseRate(detailVO.getPurchaseRate());
+        synchronized (detailVO){
+            fundEntity.setFundCode(detailVO.getFundCode());
+            fundEntity.setFundName(detailVO.getFundName());
+            fundEntity.setManagerCode(detailVO.getManagerCode());
+            fundEntity.setManagerName(detailVO.getManagerName());
+            fundEntity.setMinSubAmount(detailVO.getMinSubAmount());
+            fundEntity.setOriginalRate(detailVO.getOriginalRate());
+            fundEntity.setPurchaseRate(detailVO.getPurchaseRate());
 
-        //获取基金阶段收益
-        FundJdzfVO jdzfVO = updateFundJdsy(fundCode, detailVO.getFundName());
+            //获取基金阶段收益
+            FundJdzfVO jdzfVO = updateFundJdsy(fundCode, detailVO.getFundName());
 
-        fundEntity.setSylThisYear(NumberUtils.parseDouble(jdzfVO.getSylThisYear(), "%"));
-        fundEntity.setSyl1z(NumberUtils.parseDouble(jdzfVO.getSyl1z(), "%"));
-        fundEntity.setSyl1y(NumberUtils.parseDouble(jdzfVO.getSyl1y(), "%"));
-        fundEntity.setSyl3y(NumberUtils.parseDouble(jdzfVO.getSyl3y(), "%"));
-        fundEntity.setSyl6y(NumberUtils.parseDouble(jdzfVO.getSyl6y(), "%"));
-        fundEntity.setSyl1n(NumberUtils.parseDouble(jdzfVO.getSyl1n(), "%"));
-        fundEntity.setSyl2n(NumberUtils.parseDouble(jdzfVO.getSyl2n(), "%"));
-        fundEntity.setSyl3n(NumberUtils.parseDouble(jdzfVO.getSyl3n(), "%"));
-        fundEntity.setSyl5n(NumberUtils.parseDouble(jdzfVO.getSyl5n(), "%"));
-        fundEntity.setSylBuild(NumberUtils.parseDouble(jdzfVO.getSylBuild(), "%"));
-        fundEntity.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
-        if (exists) {
-            fundMapper.updateById(fundEntity);
-        } else {
-            fundMapper.insert(fundEntity);
+            fundEntity.setSylThisYear(NumberUtils.parseDouble(jdzfVO.getSylThisYear(), "%"));
+            fundEntity.setSyl1z(NumberUtils.parseDouble(jdzfVO.getSyl1z(), "%"));
+            fundEntity.setSyl1y(NumberUtils.parseDouble(jdzfVO.getSyl1y(), "%"));
+            fundEntity.setSyl3y(NumberUtils.parseDouble(jdzfVO.getSyl3y(), "%"));
+            fundEntity.setSyl6y(NumberUtils.parseDouble(jdzfVO.getSyl6y(), "%"));
+            fundEntity.setSyl1n(NumberUtils.parseDouble(jdzfVO.getSyl1n(), "%"));
+            fundEntity.setSyl2n(NumberUtils.parseDouble(jdzfVO.getSyl2n(), "%"));
+            fundEntity.setSyl3n(NumberUtils.parseDouble(jdzfVO.getSyl3n(), "%"));
+            fundEntity.setSyl5n(NumberUtils.parseDouble(jdzfVO.getSyl5n(), "%"));
+            fundEntity.setSylBuild(NumberUtils.parseDouble(jdzfVO.getSylBuild(), "%"));
+
+            //获取特色数据
+            FundCharacteristicDataVO characteristicDataVO = fundCrawler.getCharacteristicData(fundCode);
+            if (Objects.nonNull(characteristicDataVO)){
+                BeanUtils.copyProperties(characteristicDataVO,fundEntity);
+            }
+
+            fundEntity.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+            if (exists) {
+                fundMapper.updateById(fundEntity);
+            } else {
+                fundMapper.insert(fundEntity);
+            }
         }
+
     }
 
     @Override
@@ -120,6 +132,10 @@ public class FundServiceIml implements IFundService {
             }
         }
         //获取收益率
+        //先删除已有收益率
+        LambdaQueryWrapper<FundJdzfEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(FundJdzfEntity::getFundCode,fundCode);
+        fundJdzfMapper.delete(wrapper);
         List<FundJdzfVO> fundJdzfVOS = fundCrawler.getFundJdSyl(fundCode);
         String fundName = fundEntity.getFundName();
         fundJdzfVOS.parallelStream().forEach(vo -> {

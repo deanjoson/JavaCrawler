@@ -118,7 +118,7 @@ public class FundCrawler {
     }
 
     @SneakyThrows
-    public FundDetailVO getFundDetail(String fundCode) {
+    public synchronized FundDetailVO  getFundDetail(String fundCode) {
         Connection.Response res = Jsoup.connect("http://fund.eastmoney.com/pingzhongdata/" + fundCode + ".js")
                 .header("Accept", "*/*")
                 .header("Accept-Encoding", "gzip, deflate")

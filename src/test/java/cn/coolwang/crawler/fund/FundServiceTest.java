@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -35,6 +36,15 @@ public class FundServiceTest {
     }
 
     @Test
+    public void updateFundDetail() {
+        List<String> fundCodes = Arrays.asList("260108", "005827", "162412", "000596", "002692", "005962", "002001", "000727", "004075", "003884", "163406", "161005");
+        for (String fundCode : fundCodes) {
+            fundService.updateFundDetail(fundCode);
+            log.info("更新基金信息：{}",fundCode);
+        }
+    }
+
+    @Test
     public void updateAllFundDetail() {
         LambdaQueryWrapper<FundEntity> wrapper = new LambdaQueryWrapper<>();
         // wrapper.isNull(FundEntity::getOriginalRate);
@@ -42,13 +52,20 @@ public class FundServiceTest {
         List<FundEntity> fundEntities = fundMapper.selectList(wrapper);
         log.info("待更新基金数量：{}",fundEntities.size());
         List<FundEntity> fail = new ArrayList<>();
+        AtomicInteger count = new AtomicInteger(1);
         fundEntities.parallelStream().forEach(fund -> {
+
             try {
                 fundService.updateFundDetail(fund.getFundCode());
             } catch (Exception e) {
                 log.warn("基金更新失败：{} {} {}", fund.getFundCode(), fund.getFundName(), fund.getFundType());
                 fail.add(fund);
             }
+            int current = count.getAndIncrement();
+            if (current % 100 == 0){
+                log.info("基金更新同步：合计：{} 已更新：{},失败：{},剩余：{}",fundEntities.size(),current,fail.size(),fundEntities.size() - current);
+            }
+
         });
 
         log.error("失败基金数量：{}", fail.size());
