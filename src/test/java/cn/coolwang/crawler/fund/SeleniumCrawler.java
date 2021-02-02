@@ -1,25 +1,17 @@
-package cn.coolwang.crawler.fund.service;
+package cn.coolwang.crawler.fund;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 public class SeleniumCrawler {
 
-    public void  fundSyl(String fundCode){
-        // System.getProperties().setProperty("webdriver.chrome.driver","D:/chromedriver_win32/chromedriver.exe");
-        //开启webDriver进程
-    }
-
-
-
 
     public static void main(String[] args) {
-        System.getProperties().setProperty("webdriver.chrome.driver","/Users/dengjun/data.localized/dengjun.localized/workspace/java/JavaCrawler/src/main/resources/selenium/chromedriver");
+        System.getProperties().setProperty("webdriver.chrome.driver", "/Users/dengjun/data.localized/dengjun.localized/workspace/java/JavaCrawler/src/main/resources/selenium/chromedriver");
 
         ChromeOptions options = new ChromeOptions();
         // 禁用沙盒
